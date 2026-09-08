@@ -18,6 +18,6 @@
 ## 4. Verification and documentation
 
 - [x] 4.1 Run renderer lint, typecheck, tests, and production build.
-- [ ] 4.2 Run native formatting/checks for the window change.
+- [x] 4.2 Run native formatting/checks for the window change.
 - [x] 4.3 Update both changelogs and `RETOMADA.md`.
-- [ ] 4.4 Run strict OpenSpec validation.
+- [x] 4.4 Run strict OpenSpec validation.

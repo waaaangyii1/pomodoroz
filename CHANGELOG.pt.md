@@ -18,6 +18,10 @@
 - **A janela desktop normal agora abre como uma área responsiva** — o canvas padrão de 980×720 dá espaço ao diário de tempo, mantendo o mínimo redimensionável de 340×470.
 - **O modo compacto agora preserva a preferência de manter no topo** — a ilha fica acima das outras janelas somente enquanto o modo compacto está ativo e depois restaura a preferência salva do usuário.
 
+### Corrigido
+
+- **A ilha flutuante não expõe mais o contorno retangular da janela nativa** — o modo compacto desativa a sombra do Windows e usa uma superfície de vidro translúcida mais leve para manter visível apenas o cronômetro em formato de pílula.
+
 ## [26.7.3] - 2026-07-30
 
 ### Adicionado

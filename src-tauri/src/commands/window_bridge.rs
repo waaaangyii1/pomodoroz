@@ -8,8 +8,7 @@ use tauri::{
     image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
     utils::{config::BundleType, platform::bundle_type},
-    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Runtime, State, Theme,
-    Window,
+    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Runtime, State, Theme, Window,
 };
 use tauri_plugin_dialog::DialogExt;
 
@@ -225,6 +224,10 @@ fn get_compact_height(_window: &Window) -> Result<f64, String> {
     Ok(WINDOW_COMPACT_BASE_HEIGHT)
 }
 
+fn should_enable_window_shadow(compact_mode: bool) -> bool {
+    !compact_mode
+}
+
 fn set_window_min_size(window: &Window, compact_mode: bool) -> Result<(), String> {
     let height = if compact_mode {
         get_compact_height(window)?
@@ -360,6 +363,9 @@ pub fn set_compact_mode(
     set_window_min_size(&window, compact_mode)?;
     window
         .set_always_on_top(compact_mode || always_on_top)
+        .map_err(map_error)?;
+    window
+        .set_shadow(should_enable_window_shadow(compact_mode))
         .map_err(map_error)?;
 
     window
@@ -895,12 +901,15 @@ mod tests {
 
     #[test]
     fn compact_window_uses_island_dimensions() {
-        let [width, height] = [
-            WINDOW_COMPACT_WIDTH,
-            WINDOW_COMPACT_BASE_HEIGHT,
-        ];
+        let [width, height] = [WINDOW_COMPACT_WIDTH, WINDOW_COMPACT_BASE_HEIGHT];
         assert_eq!(width, 640.0);
         assert_eq!(height, 100.0);
+    }
+
+    #[test]
+    fn compact_window_disables_native_shadow() {
+        assert!(!should_enable_window_shadow(true));
+        assert!(should_enable_window_shadow(false));
     }
 
     #[test]

@@ -43,14 +43,18 @@ export const StyledTimeIsland = styled.section`
   padding: 0.7rem 0.9rem 0.7rem 1.7rem;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: 999px;
-  background: rgba(8, 9, 13, 0.82);
+  background: linear-gradient(
+    115deg,
+    rgba(20, 23, 30, 0.3),
+    rgba(8, 10, 15, 0.22)
+  );
   box-shadow:
-    0 1.6rem 4rem rgba(0, 0, 0, 0.34),
-    inset 0 1px rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(24px) saturate(135%);
-  -webkit-backdrop-filter: blur(24px) saturate(135%);
+    0 1rem 2.8rem rgba(0, 0, 0, 0.2),
+    inset 0 1px rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
 `;
 
 export const StyledTimeIslandDragRegion = styled.div`

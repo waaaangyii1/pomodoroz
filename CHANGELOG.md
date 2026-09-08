@@ -18,6 +18,10 @@
 - **The normal desktop window now opens as a responsive workspace** — the default 980×720 canvas gives the daily journal room to expand while retaining a 340×470 resizable minimum.
 - **Compact mode now preserves always-on-top preferences** — the island is forced above other windows only while compact mode is active, then restores the user's saved preference.
 
+### Fixed
+
+- **The floating island no longer exposes the rectangular native window frame** — compact mode disables the Windows shadow and uses a lighter translucent glass surface so only the pill-shaped timer remains visible.
+
 ## [26.7.3] - 2026-07-30
 
 ### Added
