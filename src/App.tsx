@@ -18,6 +18,7 @@ const COMPACT_EXIT_PATHS = [
   "/config",
   "/settings",
   "/statistics",
+  "/journal",
 ];
 
 const BLOCKED_DOM_STYLE_PROPS = new Set([

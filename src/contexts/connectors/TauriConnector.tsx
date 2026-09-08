@@ -232,8 +232,9 @@ export const TauriConnectorProvider = ({
   useEffect(() => {
     sendToMain(SET_COMPACT_MODE, {
       compactMode: settings.compactMode,
+      alwaysOnTop: settings.alwaysOnTop,
     });
-  }, [sendToMain, settings.compactMode]);
+  }, [sendToMain, settings.alwaysOnTop, settings.compactMode]);
 
   useEffect(() => {
     sendToMain(SET_UI_THEME, {

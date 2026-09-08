@@ -8,3 +8,4 @@ export { default as Settings } from "./Settings";
 
 export const TaskList = lazy(() => import("./Tasks"));
 export const Statistics = lazy(() => import("./Statistics"));
+export const Journal = lazy(() => import("./Journal"));

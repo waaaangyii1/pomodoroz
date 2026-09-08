@@ -1,5 +1,12 @@
 import { SVGTypes } from "components";
-import { TaskList, Config, Timer, Settings, Statistics } from "routes";
+import {
+  TaskList,
+  Config,
+  Timer,
+  Settings,
+  Statistics,
+  Journal,
+} from "routes";
 
 export const APP_NAME = "Pomodoroz";
 export const APP_VERSION = __POMODOROZ_APP_VERSION__;
@@ -38,6 +45,14 @@ type NavItemTypes = {
 export const routes: (
   hasUpdateNotification?: boolean
 ) => NavItemTypes[] = (hasUpdateNotification = false) => [
+  {
+    icon: "statistics",
+    name: "nav.journal",
+    exact: true,
+    path: "/journal",
+    component: Journal,
+    notify: false,
+  },
   {
     icon: "task",
     name: "nav.taskList",

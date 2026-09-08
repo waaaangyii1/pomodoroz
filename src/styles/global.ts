@@ -4,6 +4,7 @@ import { darkTheme, lightTheme } from "./themes";
 type GlobalTypes = {
   isDarkMode?: boolean;
   useNativeTitlebar?: boolean;
+  compactMode?: boolean;
 };
 
 export const GlobalStyles = createGlobalStyle<GlobalTypes>`
@@ -52,7 +53,8 @@ export const GlobalStyles = createGlobalStyle<GlobalTypes>`
     overflow: hidden;
     box-sizing: inherit;
 
-    background-color: var(--color-bg-primary);
+    background-color: ${(p) =>
+      p.compactMode ? "transparent" : "var(--color-bg-primary)"};
   }
 
   #app {
@@ -67,11 +69,13 @@ export const GlobalStyles = createGlobalStyle<GlobalTypes>`
     width: 100%;
     height: 100%;
     border: ${(p) =>
-      !p.useNativeTitlebar
+      !p.compactMode && !p.useNativeTitlebar
         ? "1px solid var(--color-border-window)"
         : "none"} ;
     box-shadow: ${(p) =>
-      !p.useNativeTitlebar && "0 1px 16px -4px rgba(0, 0, 0, 0.5)"};
+      !p.compactMode &&
+      !p.useNativeTitlebar &&
+      "0 1px 16px -4px rgba(0, 0, 0, 0.5)"};
     box-sizing: border-box;
   }
 

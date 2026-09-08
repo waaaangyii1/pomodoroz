@@ -88,6 +88,7 @@ export type SetTrayCopyPayload = {
 
 export type SetCompactModePayload = {
   compactMode: boolean;
+  alwaysOnTop: boolean;
 };
 
 export type CompactExpandToHeightPayload = {

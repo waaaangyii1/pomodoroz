@@ -8,6 +8,7 @@ import Control from "./Control";
 import Counter from "./Counter";
 import CompactTaskDisplay from "./CompactTaskDisplay";
 import FocusExtensionPrompt from "./FocusExtensionPrompt";
+import TimeIsland from "./TimeIsland";
 
 type TimerLocationState = {
   enableCompactMode?: boolean;
@@ -19,6 +20,9 @@ export default function Timer() {
   const navigate = useNavigate();
   const compactMode = useAppSelector(
     (state) => state.settings.compactMode
+  );
+  const activeJournalSession = useAppSelector(
+    (state) => state.timeJournal.activeSession
   );
   const { resetTimerAction, shouldPromptFocusToIdleReset } =
     useContext(CounterContext);
@@ -46,6 +50,10 @@ export default function Timer() {
     },
     [resetTimerAction]
   );
+
+  if (compactMode && activeJournalSession) {
+    return <TimeIsland />;
+  }
 
   return (
     <StyledTimer className={compactMode ? "compact" : ""}>

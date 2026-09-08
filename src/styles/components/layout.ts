@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-type LayoutProps = { noTransition?: boolean };
+type LayoutProps = { noTransition?: boolean; compactMode?: boolean };
 
 export const StyledLayout = styled.div<LayoutProps>`
   width: 100%;
@@ -9,7 +9,8 @@ export const StyledLayout = styled.div<LayoutProps>`
   display: flex;
   flex-direction: column;
   justify-items: center;
-  background-color: var(--color-bg-primary);
+  background-color: ${(p) =>
+    p.compactMode ? "transparent" : "var(--color-bg-primary)"};
 
   & > main {
     height: 38rem;

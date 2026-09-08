@@ -230,8 +230,11 @@ const Layout: React.FC<Props> = ({ children }) => {
     dismissedUpdatePromptVersion !== update.updateVersion;
 
   return (
-    <StyledLayout noTransition={noTransition}>
-      {!settings.useNativeTitlebar && (
+    <StyledLayout
+      noTransition={noTransition}
+      compactMode={settings.compactMode}
+    >
+      {!settings.compactMode && !settings.useNativeTitlebar && (
         <Titlebar
           darkMode={settings.enableDarkTheme}
           timerType={timer.timerType}

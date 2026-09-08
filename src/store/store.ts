@@ -11,6 +11,8 @@ import settingReducer from "./settings";
 import statisticsReducer from "./statistics";
 import { STATISTICS_STORAGE_KEY } from "./statistics";
 import taskSelectionReducer from "./taskSelection";
+import timeJournalReducer from "./timeJournal";
+import { TIME_JOURNAL_STORAGE_KEY } from "./timeJournal";
 import timerReducer from "./timer";
 import tasksReducer from "./tasks";
 import updateReducer from "./update";
@@ -24,6 +26,7 @@ const store = configureStore({
     settings: settingReducer,
     statistics: statisticsReducer,
     taskSelection: taskSelectionReducer,
+    timeJournal: timeJournalReducer,
     timer: timerReducer,
     tasks: tasksReducer,
     update: updateReducer,
@@ -57,6 +60,20 @@ if (canPersistStatistics && persistedStatisticsResult.status !== "ok") {
   saveToStorage(STATISTICS_STORAGE_KEY, store.getState().statistics);
 }
 
+const persistedTimeJournalResult = readFromStorage(
+  TIME_JOURNAL_STORAGE_KEY
+);
+const canPersistTimeJournal =
+  persistedTimeJournalResult.status !== "corrupt" ||
+  backupCorruptStorageValue(TIME_JOURNAL_STORAGE_KEY) !== null;
+
+if (
+  canPersistTimeJournal &&
+  persistedTimeJournalResult.status !== "ok"
+) {
+  saveToStorage(TIME_JOURNAL_STORAGE_KEY, store.getState().timeJournal);
+}
+
 const persistRootState = () => {
   if (canPersistRootState) {
     saveToStorage("state", {
@@ -69,6 +86,13 @@ const persistRootState = () => {
 
   if (canPersistStatistics) {
     saveToStorage(STATISTICS_STORAGE_KEY, store.getState().statistics);
+  }
+
+  if (canPersistTimeJournal) {
+    saveToStorage(
+      TIME_JOURNAL_STORAGE_KEY,
+      store.getState().timeJournal
+    );
   }
 };
 

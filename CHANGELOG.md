@@ -6,6 +6,18 @@
 > Forked on 2026-03-25 from Pomatez v1.10.0.
 > Thanks to the original author for the solid foundation.
 
+## [Unreleased]
+
+### Added
+
+- **Personal time journal** — a new Chinese-first daily workspace provides manual activity timing, local persistence, category allocation, a chronological timeline, and editable time records.
+- **Floating time island** — active journal sessions can move into a translucent, top-centered compact window with pause, resume, end, restore, and drag controls.
+
+### Changed
+
+- **The normal desktop window now opens as a responsive workspace** — the default 980×720 canvas gives the daily journal room to expand while retaining a 340×470 resizable minimum.
+- **Compact mode now preserves always-on-top preferences** — the island is forced above other windows only while compact mode is active, then restores the user's saved preference.
+
 ## [26.7.3] - 2026-07-30
 
 ### Added

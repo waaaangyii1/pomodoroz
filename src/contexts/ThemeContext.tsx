@@ -47,6 +47,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
       <GlobalStyles
         isDarkMode={settings.enableDarkTheme}
         useNativeTitlebar={settings.useNativeTitlebar}
+        compactMode={settings.compactMode}
       />
       {children}
     </ThemeContext.Provider>

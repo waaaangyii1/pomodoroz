@@ -8,16 +8,19 @@ use tauri::{
     image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
     utils::{config::BundleType, platform::bundle_type},
-    AppHandle, Emitter, LogicalSize, Manager, Runtime, State, Theme, Window,
+    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Runtime, State, Theme,
+    Window,
 };
 use tauri_plugin_dialog::DialogExt;
 
-const WINDOW_WIDTH: f64 = 340.0;
-const WINDOW_FRAME_HEIGHT_WINDOWS: f64 = 470.0;
-const WINDOW_FRAME_HEIGHT_NATIVE_TITLEBAR: f64 = 456.0;
-const WINDOW_FRAME_HEIGHT_FRAMELESS: f64 = 490.0;
+const WINDOW_WIDTH: f64 = 980.0;
+const WINDOW_MIN_WIDTH: f64 = 340.0;
+const WINDOW_MIN_HEIGHT: f64 = 470.0;
+const WINDOW_COMPACT_WIDTH: f64 = 640.0;
+const WINDOW_FRAME_HEIGHT_WINDOWS: f64 = 720.0;
+const WINDOW_FRAME_HEIGHT_NATIVE_TITLEBAR: f64 = 706.0;
+const WINDOW_FRAME_HEIGHT_FRAMELESS: f64 = 740.0;
 const WINDOW_COMPACT_BASE_HEIGHT: f64 = 100.0;
-const WINDOW_COMPACT_TITLEBAR_COMPENSATION: f64 = 40.0;
 const WINDOW_COMPACT_GRID_HEIGHT: f64 = 320.0;
 const WINDOW_COMPACT_ACTIONS_HEIGHT: f64 = 160.0;
 const WINDOW_COMPACT_FOCUS_EXTENSION_HEIGHT: f64 = 76.0;
@@ -218,23 +221,44 @@ fn get_frame_height(window: &Window) -> Result<f64, String> {
     }
 }
 
-fn get_compact_height(window: &Window) -> Result<f64, String> {
-    if is_native_titlebar(window)? {
-        Ok(WINDOW_COMPACT_BASE_HEIGHT)
-    } else {
-        Ok(WINDOW_COMPACT_BASE_HEIGHT + WINDOW_COMPACT_TITLEBAR_COMPENSATION)
-    }
+fn get_compact_height(_window: &Window) -> Result<f64, String> {
+    Ok(WINDOW_COMPACT_BASE_HEIGHT)
 }
 
 fn set_window_min_size(window: &Window, compact_mode: bool) -> Result<(), String> {
     let height = if compact_mode {
         get_compact_height(window)?
     } else {
-        get_frame_height(window)?
+        WINDOW_MIN_HEIGHT
     };
 
     window
-        .set_min_size(Some(LogicalSize::new(WINDOW_WIDTH, height)))
+        .set_min_size(Some(LogicalSize::new(
+            if compact_mode {
+                WINDOW_COMPACT_WIDTH
+            } else {
+                WINDOW_MIN_WIDTH
+            },
+            height,
+        )))
+        .map_err(map_error)
+}
+
+fn position_compact_window(window: &Window) -> Result<(), String> {
+    let Some(monitor) = window.current_monitor().map_err(map_error)? else {
+        return Ok(());
+    };
+    let scale_factor = monitor.scale_factor();
+    let monitor_position = monitor.position();
+    let monitor_size = monitor.size();
+    let monitor_x = monitor_position.x as f64 / scale_factor;
+    let monitor_y = monitor_position.y as f64 / scale_factor;
+    let monitor_width = monitor_size.width as f64 / scale_factor;
+    let x = monitor_x + (monitor_width - WINDOW_COMPACT_WIDTH) / 2.0;
+    let y = monitor_y + 16.0;
+
+    window
+        .set_position(LogicalPosition::new(x, y))
         .map_err(map_error)
 }
 
@@ -322,7 +346,11 @@ pub fn set_fullscreen_break(
 }
 
 #[tauri::command(rename_all = "camelCase")]
-pub fn set_compact_mode(window: Window, compact_mode: bool) -> Result<(), String> {
+pub fn set_compact_mode(
+    window: Window,
+    compact_mode: bool,
+    always_on_top: bool,
+) -> Result<(), String> {
     let height = if compact_mode {
         get_compact_height(&window)?
     } else {
@@ -330,10 +358,26 @@ pub fn set_compact_mode(window: Window, compact_mode: bool) -> Result<(), String
     };
 
     set_window_min_size(&window, compact_mode)?;
+    window
+        .set_always_on_top(compact_mode || always_on_top)
+        .map_err(map_error)?;
 
     window
-        .set_size(LogicalSize::new(WINDOW_WIDTH, height))
-        .map_err(map_error)
+        .set_size(LogicalSize::new(
+            if compact_mode {
+                WINDOW_COMPACT_WIDTH
+            } else {
+                WINDOW_WIDTH
+            },
+            height,
+        ))
+        .map_err(map_error)?;
+
+    if compact_mode {
+        position_compact_window(&window)?;
+    }
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -341,7 +385,7 @@ pub fn compact_expand(window: Window) -> Result<(), String> {
     let compact_height = get_compact_height(&window)?;
     window
         .set_size(LogicalSize::new(
-            WINDOW_WIDTH,
+            WINDOW_COMPACT_WIDTH,
             compact_height + WINDOW_COMPACT_GRID_HEIGHT,
         ))
         .map_err(map_error)
@@ -358,7 +402,7 @@ pub fn compact_expand_to_height(window: Window, height: f64) -> Result<(), Strin
     };
 
     window
-        .set_size(LogicalSize::new(WINDOW_WIDTH, height))
+        .set_size(LogicalSize::new(WINDOW_COMPACT_WIDTH, height))
         .map_err(map_error)
 }
 
@@ -367,7 +411,7 @@ pub fn compact_expand_actions(window: Window) -> Result<(), String> {
     let compact_height = get_compact_height(&window)?;
     window
         .set_size(LogicalSize::new(
-            WINDOW_WIDTH,
+            WINDOW_COMPACT_WIDTH,
             compact_height + WINDOW_COMPACT_ACTIONS_HEIGHT,
         ))
         .map_err(map_error)
@@ -378,7 +422,7 @@ pub fn compact_expand_focus_extension(window: Window) -> Result<(), String> {
     let compact_height = get_compact_height(&window)?;
     window
         .set_size(LogicalSize::new(
-            WINDOW_WIDTH,
+            WINDOW_COMPACT_WIDTH,
             compact_height + WINDOW_COMPACT_FOCUS_EXTENSION_HEIGHT,
         ))
         .map_err(map_error)
@@ -388,7 +432,7 @@ pub fn compact_expand_focus_extension(window: Window) -> Result<(), String> {
 pub fn compact_collapse(window: Window) -> Result<(), String> {
     let compact_height = get_compact_height(&window)?;
     window
-        .set_size(LogicalSize::new(WINDOW_WIDTH, compact_height))
+        .set_size(LogicalSize::new(WINDOW_COMPACT_WIDTH, compact_height))
         .map_err(map_error)
 }
 
@@ -409,8 +453,9 @@ pub fn set_native_titlebar(
     use_native_titlebar: bool,
     compact_mode: bool,
 ) -> Result<(), String> {
+    let should_use_native_titlebar = use_native_titlebar && !compact_mode;
     window
-        .set_decorations(use_native_titlebar)
+        .set_decorations(should_use_native_titlebar)
         .map_err(map_error)?;
 
     // Workaround Linux/webkit2gtk:
@@ -848,18 +893,14 @@ mod tests {
         }
     }
 
-    // Modo compacto: sem titlebar nativo a altura-base soma a compensacao.
-    // A logica vive em get_compact_height (que exige Window), entao
-    // validamos a relacao numerica que ela usa. Os valores entram via array
-    // (avaliados em runtime) para nao virar uma asbercao sobre constante.
     #[test]
-    fn compact_height_compensates_without_native_titlebar() {
-        let [base, compensation] = [
+    fn compact_window_uses_island_dimensions() {
+        let [width, height] = [
+            WINDOW_COMPACT_WIDTH,
             WINDOW_COMPACT_BASE_HEIGHT,
-            WINDOW_COMPACT_TITLEBAR_COMPENSATION,
         ];
-        assert!(compensation > 0.0, "compensation must be positive");
-        assert_eq!(base + compensation, 140.0);
+        assert_eq!(width, 640.0);
+        assert_eq!(height, 100.0);
     }
 
     #[test]
@@ -868,6 +909,9 @@ mod tests {
         // trata cada assert como asbercao sobre constante (-D warnings).
         let dimensions = [
             WINDOW_WIDTH,
+            WINDOW_MIN_WIDTH,
+            WINDOW_MIN_HEIGHT,
+            WINDOW_COMPACT_WIDTH,
             WINDOW_FRAME_HEIGHT_WINDOWS,
             WINDOW_FRAME_HEIGHT_NATIVE_TITLEBAR,
             WINDOW_FRAME_HEIGHT_FRAMELESS,

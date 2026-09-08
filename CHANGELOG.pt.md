@@ -6,6 +6,18 @@
 > Fork iniciado em 2026-03-25 a partir do Pomatez v1.10.0.
 > Agradecimento ao autor original pela base sólida.
 
+## [Não lançado]
+
+### Adicionado
+
+- **Diário pessoal de tempo** — uma nova área diária, com interface chinesa em primeiro plano, oferece cronometragem manual de atividades, persistência local, distribuição por categoria, linha do tempo cronológica e registros editáveis.
+- **Ilha flutuante de tempo** — sessões ativas do diário podem usar uma janela compacta translúcida e centralizada no topo, com controles para pausar, continuar, encerrar, restaurar e arrastar.
+
+### Alterado
+
+- **A janela desktop normal agora abre como uma área responsiva** — o canvas padrão de 980×720 dá espaço ao diário de tempo, mantendo o mínimo redimensionável de 340×470.
+- **O modo compacto agora preserva a preferência de manter no topo** — a ilha fica acima das outras janelas somente enquanto o modo compacto está ativo e depois restaura a preferência salva do usuário.
+
 ## [26.7.3] - 2026-07-30
 
 ### Adicionado
